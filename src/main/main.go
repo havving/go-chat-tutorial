@@ -1,7 +1,7 @@
 package main
 
 import (
-	sessions "github.com/goincremental/negroni-sessions"
+	"github.com/goincremental/negroni-sessions"
 	"github.com/goincremental/negroni-sessions/cookiestore"
 	"net/http"
 

@@ -34,7 +34,7 @@ func main() {
 
 	router.GET("/logout", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		// 세션에서 사용자 정보 제거 후 로그인 페이지로 이동
-		sessions.GetSession(r).Delete(keyCurrentUser)
+		//sessions.GetSession(r).Delete(keyCurrentUser)
 		http.Redirect(w, r, "/login", http.StatusFound)
 	})
 
@@ -45,6 +45,9 @@ func main() {
 	n := negroni.Classic()
 	store := cookiestore.New([]byte(sessionSecret))
 	n.Use(sessions.Sessions(sessionKey, store))
+
+	// 인증 핸들러 등록
+	n.Use(LoginRequired("/login", "/auth"))
 
 	// negroni에 router를 핸들러로 등록
 	n.UseHandler(router)

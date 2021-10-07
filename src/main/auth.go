@@ -6,8 +6,10 @@ import (
 	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/gomniauth/providers/google"
 	"github.com/stretchr/objx"
+	"github.com/urfave/negroni"
 	"log"
 	"net/http"
+	"strings"
 )
 
 const (
@@ -73,5 +75,36 @@ func loginHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 
 	default:
 		http.Error(w, "Auth action '"+action+"' is not supported", http.StatusFound)
+	}
+}
+
+func LoginRequired(ignore ...string) negroni.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+		// ignore url이면 다음 핸들러 실행
+		for _, s := range ignore {
+			if strings.HasPrefix(r.URL.Path, s) {
+				next(w, r)
+				return
+			}
+		}
+
+		// CurrentUser 정보를 가져옴
+		u := GetCurrentUser(r)
+
+		// CurrentUser 정보가 유효하면 만료 시간을 갱신하고 다음 핸들러 실행
+		if u != nil && u.Valid() {
+			SetCurrentUser(r, u)
+			next(w, r)
+			return
+		}
+
+		// CurrentUser 정보가 유효하지 않으면 CurrentUser를 nil로 세팅
+		SetCurrentUser(r, nil)
+
+		// 로그인 후 이동할 url을 세션에 저장
+		sessions.GetSession(r).Set(nextPageKey, r.URL.RequestURI())
+
+		// 로그인 페이지로 리다이렉트
+		http.Redirect(w, r, "/login", http.StatusFound)
 	}
 }

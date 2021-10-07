@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	sessions "github.com/goincremental/negroni-sessions"
+	"github.com/goincremental/negroni-sessions"
 	"net/http"
 	"time"
 )
@@ -13,11 +13,11 @@ const (
 )
 
 type User struct {
-	Uid       string `json:"uid"`
-	Name      string `json:"name"`
-	Email     string `json:"user"`
-	AvatarUrl string `json:"avatar_url"`
-	Expired   string `json:"expired"`
+	Uid       string    `json:"uid"`
+	Name      string    `json:"name"`
+	Email     string    `json:"user"`
+	AvatarUrl string    `json:"avatar_url"`
+	Expired   time.Time `json:"expired"`
 }
 
 func (u *User) Valid() bool {

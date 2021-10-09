@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/goincremental/negroni-sessions"
 	"github.com/goincremental/negroni-sessions/cookiestore"
+	"gopkg.in/mgo.v2"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -10,11 +11,21 @@ import (
 	"github.com/urfave/negroni"
 )
 
-var renderer *render.Render
+var (
+	renderer     *render.Render
+	mongoSession mgo.Session
+)
 
 func init() {
 	// 렌더러 생성
 	renderer = render.New()
+
+	s, err := mgo.Dial("mongodb://localhost")
+	if err != nil {
+		panic(err)
+	}
+
+	mongoSession = *s
 }
 
 func main() {
@@ -40,6 +51,10 @@ func main() {
 
 	// 소셜 로그인 기능
 	router.GET("/auth/:action/:provider", loginHandler)
+
+	// 채팅방
+	router.POST("/rooms", createRoom)
+	router.GET("/rooms", retrieveRooms)
 
 	// negroni 미들웨어 생성
 	n := negroni.Classic()

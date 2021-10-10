@@ -55,6 +55,7 @@ func main() {
 	// 채팅방
 	router.POST("/rooms", createRoom)
 	router.GET("/rooms", retrieveRooms)
+	router.GET("/rooms/:id/messages", retrieveMessages)
 
 	// negroni 미들웨어 생성
 	n := negroni.Classic()

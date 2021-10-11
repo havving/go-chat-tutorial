@@ -3,7 +3,9 @@ package main
 import (
 	"github.com/goincremental/negroni-sessions"
 	"github.com/goincremental/negroni-sessions/cookiestore"
+	"github.com/gorilla/websocket"
 	"gopkg.in/mgo.v2"
+	"log"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -11,9 +13,15 @@ import (
 	"github.com/urfave/negroni"
 )
 
+const socketBufferSize = 1024
+
 var (
 	renderer     *render.Render
 	mongoSession mgo.Session
+	upgrader     = &websocket.Upgrader{
+		ReadBufferSize:  socketBufferSize,
+		WriteBufferSize: socketBufferSize,
+	}
 )
 
 func init() {
@@ -56,6 +64,15 @@ func main() {
 	router.POST("/rooms", createRoom)
 	router.GET("/rooms", retrieveRooms)
 	router.GET("/rooms/:id/messages", retrieveMessages)
+
+	router.GET("/ws/:room_id", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		socket, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			log.Fatal("ServeHTTP: ", err)
+			return
+		}
+		newClient(socket, ps.ByName("room_id"), GetCurrentUser(r))
+	})
 
 	// negroni 미들웨어 생성
 	n := negroni.Classic()

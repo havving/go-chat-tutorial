@@ -1,4 +1,4 @@
-package main
+package modules
 
 import (
 	"github.com/julienschmidt/httprouter"
@@ -40,7 +40,7 @@ func (m *Message) create() error {
 }
 
 // REST API 액션으로 사용할 함수
-func retrieveMessages(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func RetrieveMessages(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	// 몽고DB 세션 생성
 	session := mongoSession.Copy()
 	// 몽고DB 세션을 닫는 코드를 defer로 등록

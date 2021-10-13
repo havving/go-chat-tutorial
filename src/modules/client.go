@@ -1,4 +1,4 @@
-package main
+package modules
 
 import (
 	"github.com/gorilla/websocket"
@@ -19,7 +19,7 @@ type Client struct {
 
 const messageBufferSize = 256
 
-func newClient(conn *websocket.Conn, roomId string, u *User) {
+func NewClient(conn *websocket.Conn, roomId string, u *User) {
 	// 새로운 클라이언트 생성
 	c := &Client{
 		conn:   conn,

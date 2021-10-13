@@ -1,4 +1,4 @@
-package main
+package modules
 
 import (
 	"github.com/julienschmidt/httprouter"
@@ -17,7 +17,7 @@ func (r *Room) FieldMap(req *http.Request) binding.FieldMap {
 }
 
 // 채팅방 정보 생성
-func createRoom(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
+func CreateRoom(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
 	// binding 패키지로 room 생성 요청 정보를 Room 타입 값으로 변환
 	r := new(Room)
 	errs := binding.Bind(req, r)
@@ -47,7 +47,7 @@ func createRoom(w http.ResponseWriter, req *http.Request, ps httprouter.Params) 
 }
 
 // 채팅방 정보 조회
-func retrieveRooms(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
+func RetrieveRooms(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
 	// 몽고DB 세션 생성
 	session := mongoSession.Copy()
 	// 몽고DB 세션을 닫는코드를 defer로 등록

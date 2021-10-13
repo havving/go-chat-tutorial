@@ -1,4 +1,4 @@
-package main
+package modules
 
 import (
 	sessions "github.com/goincremental/negroni-sessions"
@@ -25,7 +25,7 @@ func init() {
 	)
 }
 
-func loginHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func LoginHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	action := ps.ByName("action")
 	provider := ps.ByName("provider")
 	s := sessions.GetSession(r)

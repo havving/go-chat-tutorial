@@ -11,6 +11,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/unrolled/render"
 	"github.com/urfave/negroni"
+	"go-chat/modules"
 )
 
 const socketBufferSize = 1024
@@ -58,12 +59,12 @@ func main() {
 	})
 
 	// 소셜 로그인 기능
-	router.GET("/auth/:action/:provider", loginHandler)
+	router.GET("/auth/:action/:provider", modules.LoginHandler)
 
 	// 채팅방
-	router.POST("/rooms", createRoom)
-	router.GET("/rooms", retrieveRooms)
-	router.GET("/rooms/:id/messages", retrieveMessages)
+	router.POST("/rooms", modules.CreateRoom)
+	router.GET("/rooms", modules.RetrieveRooms)
+	router.GET("/rooms/:id/messages", modules.RetrieveMessages)
 
 	router.GET("/ws/:room_id", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		socket, err := upgrader.Upgrade(w, r, nil)
@@ -71,7 +72,7 @@ func main() {
 			log.Fatal("ServeHTTP: ", err)
 			return
 		}
-		newClient(socket, ps.ByName("room_id"), GetCurrentUser(r))
+		modules.NewClient(socket, ps.ByName("room_id"), modules.GetCurrentUser(r))
 	})
 
 	// negroni 미들웨어 생성
@@ -80,7 +81,7 @@ func main() {
 	n.Use(sessions.Sessions(sessionKey, store))
 
 	// 인증 핸들러 등록
-	n.Use(LoginRequired("/login", "/auth"))
+	n.Use(modules.LoginRequired("/login", "/auth"))
 
 	// negroni에 router를 핸들러로 등록
 	n.UseHandler(router)

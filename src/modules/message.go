@@ -21,7 +21,7 @@ type Message struct {
 // 웹소켓으로 메시지 생성
 func (m *Message) create() error {
 	// 몽고DB 세션 생성
-	session := mongoSession.Copy()
+	session := MongoSession.Copy()
 	// 몽고DB 세션을 닫는 코드를 defer로 등록
 	defer session.Close()
 	// 몽고DB ID 생성
@@ -42,7 +42,7 @@ func (m *Message) create() error {
 // REST API 액션으로 사용할 함수
 func RetrieveMessages(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	// 몽고DB 세션 생성
-	session := mongoSession.Copy()
+	session := MongoSession.Copy()
 	// 몽고DB 세션을 닫는 코드를 defer로 등록
 	defer session.Close()
 
@@ -61,10 +61,10 @@ func RetrieveMessages(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 
 	if err != nil {
 		// 오류 발생 시 500에러 반환
-		renderer.JSON(w, http.StatusInternalServerError, err)
+		Renderer.JSON(w, http.StatusInternalServerError, err)
 		return
 	}
 
 	// message 조회 결과 반환
-	renderer.JSON(w, http.StatusOK, messages)
+	Renderer.JSON(w, http.StatusOK, messages)
 }

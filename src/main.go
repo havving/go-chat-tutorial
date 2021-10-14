@@ -17,9 +17,7 @@ import (
 const socketBufferSize = 1024
 
 var (
-	renderer     *render.Render
-	mongoSession mgo.Session
-	upgrader     = &websocket.Upgrader{
+	upgrader = &websocket.Upgrader{
 		ReadBufferSize:  socketBufferSize,
 		WriteBufferSize: socketBufferSize,
 	}
@@ -27,14 +25,14 @@ var (
 
 func init() {
 	// 렌더러 생성
-	renderer = render.New()
+	modules.Renderer = render.New()
 
 	s, err := mgo.Dial("mongodb://localhost")
 	if err != nil {
 		panic(err)
 	}
 
-	mongoSession = *s
+	modules.MongoSession = *s
 }
 
 func main() {
@@ -44,12 +42,12 @@ func main() {
 	// 핸들러 정의
 	router.GET("/", func(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
 		// 렌더러를 사용하여 템플릿 렌더링
-		renderer.HTML(w, http.StatusOK, "index", map[string]string{"title": "Simple Chat!"})
+		modules.Renderer.HTML(w, http.StatusOK, "index", map[string]string{"title": "Simple Chat!"})
 	})
 
 	router.GET("/login", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		// 로그인 페이지 렌더링
-		renderer.HTML(w, http.StatusOK, "login", nil)
+		modules.Renderer.HTML(w, http.StatusOK, "login", nil)
 	})
 
 	router.GET("/logout", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {

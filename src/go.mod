@@ -16,6 +16,7 @@ require (
 
 require (
 	github.com/clbanning/x2j v0.0.0-20191024224557-825249438eec // indirect
+	github.com/codegangsta/negroni v1.0.0 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/securecookie v1.1.1 // indirect

@@ -25,7 +25,9 @@ var (
 
 func init() {
 	// 렌더러 생성
-	modules.Renderer = render.New()
+	modules.Renderer = render.New(render.Options{
+		Extensions: []string{".html"},
+	})
 
 	s, err := mgo.Dial("mongodb://localhost")
 	if err != nil {
